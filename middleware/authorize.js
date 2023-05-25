@@ -32,7 +32,6 @@ module.exports = (req, res, next) => {
                     error: "Invalid JWT"
                 })
             }
-
             req.userId = decoded.id;
             next();
         }

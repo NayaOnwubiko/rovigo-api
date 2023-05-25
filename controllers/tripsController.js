@@ -5,14 +5,14 @@ require('dotenv').config();
 
 exports.getAllTrips = async (req, res) => {
     await knex("trips")
-          .where({ id: req.params.id })
+          .where({ user_id: req.userId })
           .then((trips) => {
             if(trips.length === 0) {
                 return res.status(404).json({
                     message: "Unable to find trips"
                 });
             }
-            res.json(trips[0]);
+            res.json(trips);
           })
           .catch((error) => {
             return res.status(400).json({
@@ -33,12 +33,15 @@ exports.createTrip = (req, res) => {
                });
     }
 
-    const { id, trip_name } = req.body;
-
+    const { id, trip_name, user_id } = req.body;
+    
+    console.log(req.body);
     knex("trips")
+        .where({ user_id: req.body.userId })
         .insert({
             id,
-            trip_name
+            trip_name,
+            user_id
         })
         .then(trips => {
             return res.status(201).json(trips[0]);
