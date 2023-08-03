@@ -5,7 +5,7 @@
 exports.up = function(knex) {
     return knex.schema.createTable("restaurants", function(table) {
         table.increments("id").primary();
-        table.integer("trip_id").unsigned().notNullable();
+        table.string("trip_id", 255).notNullable();
         table.string("restaurant_name").notNullable();
         table.string("restaurant_address");
         table.string("restaurant_phone");
