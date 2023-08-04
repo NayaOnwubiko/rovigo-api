@@ -1,83 +1,21 @@
-const bcrypt = require("bcrypt");
-const knex = require("knex")(require("../knexfile"));
-require("dotenv").config();
-const jwt = require("jsonwebtoken");
+import User from "../models/users.model.js";
+import createError from "../utils/createError.js";
 
-//Creating a new user
-exports.signup = async (req, res) => {
-  const { name, email, password } = req.body;
+// Delete User
+export const deleteUser = async (req, res, next) => {
+  const user = await User.findById(req.params.id);
 
-  if (!name || !email || !password) {
-    return res.status(400).send("Please complete all required fields");
+  if (req.userId !== user._id.toString()) {
+    return createError(403, "You can only delete your account");
   }
+  await User.findByIdAndDelete(req.params.id);
 
-  const hashedPassword = bcrypt.hashSync(
-    password,
-    Number(process.env.BCRYPT_SALT_ROUNDS)
-  );
-
-  //Insert user into database
-  const newUserIds = await knex("users").insert({
-    name,
-    email,
-    password: hashedPassword,
-  });
-  const newUserId = newUserIds[0];
-
-  const newUsers = await knex("users").where({ id: newUserId });
-
-  const newUser = newUsers[0];
-
-  const token = jwt.sign({ id: newUser.id }, process.env.JWT_SECRET_KEY);
-
-  res.json({
-    message: "Successfully signed up",
-    token,
-  });
+  res.status(200).send("Successfully deleted");
 };
 
-exports.login = async (req, res) => {
-  if (!req.body.email || !req.body.password) {
-    return res.status(400).json({
-      error: "Email and password fields are required",
-    });
-  }
+// Get User
+export const getUser = async (req, res, next) => {
+  const user = await User.findById(req.params.id);
 
-  //Validates the user
-  knex("users")
-    .where({ email: req.body.email })
-    .then((users) => {
-      if (users.length !== 1) {
-        return res.status(401).json({
-          error: "Invalid login credentials",
-        });
-      }
-      const foundUser = users[0];
-
-      //Based on this user found, check the password
-      const isValidPassword = bcrypt.compareSync(
-        req.body.password,
-        foundUser.password
-      );
-
-      if (!isValidPassword) {
-        return res.status(401).json({
-          error: "Invalid login credentials",
-        });
-      }
-
-      const token = jwt.sign({ id: foundUser.id }, process.env.JWT_SECRET_KEY);
-
-      res.json({
-        message: "Successfully logged in",
-        token: token,
-        id: foundUser.id,
-      });
-    });
-};
-
-exports.approve = async (req, res) => {
-  const user = await knex("users").where({ id: req.userId }).first();
-  delete user.password;
-  res.json(user);
+  res.status(200).send(user);
 };

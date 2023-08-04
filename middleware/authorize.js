@@ -1,40 +1,13 @@
-require('dotenv').config();
-const jwt = require('jsonwebtoken');
+import jwt from "jsonwebtoken";
+import createError from "../utils/createError.js";
 
-//Validate that the JWT is formatted correctly
+export const verifyToken = (req, res, next) => {
+  const token = req.cookies.accessToken;
+  if (!token) return next(createError(401, "You are not authenticated"));
 
-module.exports = (req, res, next) => {
-    const bearerTokenString = req.headers.authorization;
-
-    if (!bearerTokenString) {
-        return res.status(401).json({
-            error: "Resource requires Bearer token in Authorization header"
-        })
-    }
-    const splitBearerToken = bearerTokenString.split(" ");
-
-    if (splitBearerToken.length !==2) {
-        return res.status(400).json({
-            error: "Bearer token is malformed"
-        })
-    }
-
-    const token = splitBearerToken[1];
-
-//Verify the JWT, then add the user id to the request
-    
-    jwt.verify(
-        token,
-        process.env.JWT_SECRET_KEY,
-        (err, decoded) => {
-            if (err) {
-                return res.status(403).json({
-                    error: "Invalid JWT"
-                })
-            }
-            req.userId = decoded.id;
-            next();
-        }
-    )
+  jwt.verify(token, process.env.JWT_SECRET_KEY, async (err, payload) => {
+    if (err) return next(createError(403, "Token is invalid"));
+    req.userId = payload.id;
+    next();
+  });
 };
-

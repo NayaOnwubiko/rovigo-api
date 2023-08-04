@@ -1,19 +1,37 @@
-const express = require("express");
+import express from "express";
+import mongoose from "mongoose";
+import dotenv from "dotenv";
+import cors from "cors";
+import cookieParser from "cookie-parser";
+
 const app = express();
-require("dotenv").config();
-const PORT = process.env.PORT || 8080;
 const CLIENT_URL = process.env.CLIENT_URL;
-const cors = require("cors");
+const PORT = process.env.PORT || 8080;
+
+dotenv.config();
+mongoose.set("strictQuery", true);
+
+const connect = async () => {
+  try {
+    await mongoose.connect(process.env.MONGO);
+    console.log("Connected to mongoDB");
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 app.use(express.json());
-app.use(cors({ origin: CLIENT_URL }));
+app.use(cookieParser());
+app.use(cors({ origin: CLIENT_URL, credentials: true }));
 
-const userRoutes = require("./routes/user-routes");
-const tripsRoutes = require("./routes/trips-routes");
+app.use((err, req, res, next) => {
+  const errorStatus = err.status || 500;
+  const errorMessage = err.message || "Something went wrong";
 
-app.use("/users", userRoutes);
-app.use("/trips", tripsRoutes);
+  return res.status(errorStatus).send(errorMessage);
+});
 
 app.listen(PORT, () => {
-  console.log(`Server listening on http://localhost:${PORT}`);
+  connect();
+  console.log("Backend server is running");
 });
