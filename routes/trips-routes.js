@@ -1,15 +1,17 @@
-const express = require("express");
+import express from "express";
+import {
+  createTrip,
+  deleteTrip,
+  getTrip,
+  getUserTrips,
+} from "../controllers/tripsController.js";
+import { verifyToken } from "../middleware/authorize.js";
+
 const router = express.Router();
-const tripsController = require("../controllers/tripsController");
-const authorize = require("../middleware/authorize");
 
-router.route("/").get(authorize, tripsController.getAllTrips);
+router.post("/", verifyToken, createTrip);
+router.delete("/:id", verifyToken, deleteTrip);
+router.get("/:id", getTrip);
+router.get("/:userId", verifyToken, getUserTrips);
 
-router
-  .route("/:id")
-  .get(tripsController.getSingleTrip)
-  .post(tripsController.addToTrip);
-
-router.route("/create").post(tripsController.createTrip);
-
-module.exports = router;
+export default router;

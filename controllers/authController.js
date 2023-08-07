@@ -7,7 +7,7 @@ export const signup = async (req, res, next) => {
   try {
     const hash = bcrypt.hashSync(
       req.body.password,
-      process.env.BCRYPT_SALT_ROUNDS
+      Number(process.env.BCRYPT_SALT_ROUNDS)
     );
     const newUser = new User({
       ...req.body,
@@ -23,7 +23,7 @@ export const signup = async (req, res, next) => {
 
 export const login = async (req, res, next) => {
   try {
-    const user = await User.findOne({ name: req.body.name });
+    const user = await User.findOne({ email: req.body.email });
     if (!user) return next(createError(404, "User not found"));
 
     const isCorrect = bcrypt.compareSync(req.body.password, user.password);
