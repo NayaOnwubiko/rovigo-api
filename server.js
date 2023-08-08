@@ -11,7 +11,6 @@ import hotelRoutes from "./routes/hotel-routes.js";
 import attractionRoutes from "./routes/attraction-routes.js";
 
 const app = express();
-const CLIENT_URL = process.env.CLIENT_URL;
 const PORT = process.env.PORT || 8080;
 
 dotenv.config();
@@ -29,7 +28,7 @@ const connect = async () => {
 
 app.use(express.json());
 app.use(cookieParser());
-app.use(cors({ origin: CLIENT_URL, credentials: true }));
+app.use(cors({ origin: "http://localhost:3000", credentials: true }));
 
 // Load Routes
 app.use("/api/auth", authRoute);

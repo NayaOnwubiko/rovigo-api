@@ -8,8 +8,11 @@ export const createTrip = async (req, res, next) => {
   });
 
   try {
-    const savedTrip = await newTrip.save();
-    res.status(201).json(savedTrip);
+    await newTrip.save();
+
+    const updatedTrips = await Trip.find({ userId: req.userId });
+
+    res.status(201).json(updatedTrips);
   } catch (err) {
     next(err);
   }
@@ -31,11 +34,11 @@ export const deleteTrip = async (req, res, next) => {
 
 export const getUserTrips = async (req, res, next) => {
   try {
-    const { userId } = req.params;
-    const trips = await Trip.find({ userId });
+    const userId = req.userId;
+    const trips = await Trip.find({ userId }).sort({ createdAt: -1 }); // Sort by descending order
 
     if (!trips) return next(createError(404, "Trips Not Found"));
-    res.status(200).send(trips);
+    res.status(200).json(trips);
   } catch (err) {
     next(err);
   }

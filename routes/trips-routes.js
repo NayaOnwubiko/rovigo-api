@@ -12,6 +12,6 @@ const router = express.Router();
 router.post("/", verifyToken, createTrip);
 router.delete("/:id", verifyToken, deleteTrip);
 router.get("/:id", getTrip);
-router.get("/:userId", verifyToken, getUserTrips);
+router.get("/", verifyToken, getUserTrips);
 
 export default router;
