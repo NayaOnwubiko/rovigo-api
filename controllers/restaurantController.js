@@ -3,8 +3,13 @@ import createError from "../utils/createError.js";
 
 export const createRestaurant = async (req, res, next) => {
   const newRestaurant = new Restaurant({
-    tripId: req.tripId,
-    ...req.body,
+    tripId: req.body.tripId,
+    name: req.body.name,
+    phone: req.body.phone,
+    website: req.body.website,
+    photo: req.body.photo.images.large.url, // Extract the URL from the object
+    address: req.body.address,
+    rankingCategory: req.body.ranking_category,
   });
 
   try {

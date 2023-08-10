@@ -3,7 +3,7 @@ import createError from "../utils/createError.js";
 
 export const createAttraction = async (req, res, next) => {
   const newAttraction = new Attraction({
-    tripId: req.tripId,
+    tripId: req.body.tripId,
     ...req.body,
   });
 

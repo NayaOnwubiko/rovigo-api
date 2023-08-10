@@ -3,7 +3,7 @@ import createError from "../utils/createError.js";
 
 export const createHotel = async (req, res, next) => {
   const newHotel = new Hotel({
-    tripId: req.tripId,
+    tripId: req.body.tripId,
     ...req.body,
   });
 
