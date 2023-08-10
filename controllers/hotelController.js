@@ -4,7 +4,11 @@ import createError from "../utils/createError.js";
 export const createHotel = async (req, res, next) => {
   const newHotel = new Hotel({
     tripId: req.body.tripId,
-    ...req.body,
+    name: req.body.name,
+    price: req.body.price,
+    rating: req.body.rating,
+    photo: req.body.photo.images.large.url,
+    rankingCategory: req.body.ranking_category,
   });
 
   try {
