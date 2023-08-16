@@ -47,5 +47,5 @@ app.use((err, req, res, next) => {
 
 app.listen(PORT, () => {
   connect();
-  console.log("Backend server is running");
+  console.log(`Backend server is running on port ${PORT}`);
 });
