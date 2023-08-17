@@ -28,7 +28,7 @@ const connect = async () => {
 
 app.use(express.json());
 app.use(cookieParser());
-app.use(cors({ origin: "https://rovigo-api.vercel.app/", credentials: true }));
+app.use(cors({ origin: "https://rovigo-api.vercel.app", credentials: true }));
 
 // Load Routes
 app.use("/api/auth", authRoute);
